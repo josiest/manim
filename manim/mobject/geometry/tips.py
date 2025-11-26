@@ -11,6 +11,7 @@ __all__ = [
     "ArrowTriangleTip",
     "ArrowTriangleFilledTip",
     "StealthTip",
+    "ArrowParenTip"
 ]
 
 from typing import TYPE_CHECKING, Any
@@ -39,6 +40,7 @@ class ArrowTip(VMobject, metaclass=ConvertToOpenGL):
         :class:`ArrowSquareTip`
         :class:`ArrowSquareFilledTip`
         :class:`StealthTip`
+        :class: `ArrowParenTip`
 
     Examples
     --------
@@ -343,7 +345,11 @@ class ArrowSquareFilledTip(ArrowSquareTip):
 
 
 class ArrowParenTip(ArrowTip, Arc):
-    r"""An arrow tip in the style of a parenthesis"""
+    r"""An arrow tip in the style of a parenthesis.
+
+    subtend_angle is the angle subtended by the arc that describes the parenthesis,
+    while the length of the arrow tip is taken to be the chord length of the arc.
+    """
 
     def __init__(
         self,
@@ -357,8 +363,8 @@ class ArrowParenTip(ArrowTip, Arc):
         self.start_angle = start_angle
         self._length = length
 
-        # height = r sin(theta)
-        #
+        # from polar coordinates: y = r sin(theta)
+        # here y = chord-length/2 and theta = subtend_angle/2
         radius = length / (2 * np.sin(subtend_angle / 2))
         Arc.__init__(
             self,

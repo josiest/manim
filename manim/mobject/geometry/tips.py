@@ -18,7 +18,7 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 
 from manim.constants import *
-from manim.mobject.geometry.arc import Circle
+from manim.mobject.geometry.arc import Arc, Circle
 from manim.mobject.geometry.polygram import Square, Triangle
 from manim.mobject.opengl.opengl_compatibility import ConvertToOpenGL
 from manim.mobject.types.vectorized_mobject import VMobject
@@ -340,3 +340,47 @@ class ArrowSquareFilledTip(ArrowSquareTip):
         self, fill_opacity: float = 1, stroke_width: float = 0, **kwargs: Any
     ) -> None:
         super().__init__(fill_opacity=fill_opacity, stroke_width=stroke_width, **kwargs)
+
+
+class ArrowParenTip(ArrowTip, Arc):
+    r"""An arrow tip in the style of a parenthesis"""
+
+    def __init__(
+        self,
+        fill_opacity: float = 0,
+        stroke_width: float = 3,
+        length: float = DEFAULT_ARROW_TIP_LENGTH,
+        start_angle: float = PI,
+        subtend_angle: float = 0.25 * TAU,
+        **kwargs: Any,
+    ) -> None:
+        self.start_angle = start_angle
+        self._length = length
+
+        # height = r sin(theta)
+        #
+        radius = length / (2 * np.sin(subtend_angle / 2))
+        Arc.__init__(
+            self,
+            radius=radius,
+            start_angle=-subtend_angle / 2,
+            angle=subtend_angle,
+            arc_center=(-radius, 0, 0),
+            fill_opacity=fill_opacity,
+            stroke_width=stroke_width,
+            **kwargs,
+        )
+
+    @property
+    def tip_point(self) -> Point3D:
+        return self.base
+
+    @property
+    def length(self) -> float:
+        return self._length
+
+    def get_start(self) -> Point3D:
+        return self.base
+
+    def get_end(self) -> Point3D:
+        return self.base
